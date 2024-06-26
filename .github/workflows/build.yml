@@ -1,0 +1,31 @@
+name: Manual Build
+
+on:
+  workflow_dispatch:  # Allows the workflow to be manually triggered
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Validate configuration
+      run: |
+        echo "Validating server.js"
+        node -e "require('./config/server.js');"
+        echo "Validating admin.js"
+        node -e "require('./config/admin.js');"
+
+    - name: Build project
+      run: npm run build
+
