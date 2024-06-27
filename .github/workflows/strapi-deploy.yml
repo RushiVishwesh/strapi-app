@@ -22,7 +22,7 @@ jobs:
             sudo apt update -y
             sudo apt install nodejs npm -y
             sudo npm install -g pm2
-            git clone 
+            git clone https://github.com/RushiVishwesh/strapi-app.git
             npm install
             npm run build
             pm2 start "npm run start" --name=strapi-app
