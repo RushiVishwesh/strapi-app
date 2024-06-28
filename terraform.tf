@@ -61,6 +61,7 @@ resource "aws_instance" "web" {
     inline = [
       "sudo apt update -y",
       "sudo apt install docker.io -y",
+      "sudo usermod -aG docker ubuntu",
       "docker pull vishweshrushi/strapi:latest",
       "docker run -d -p 1337:1337 vishweshrushi/strapi:latest"
     ]
