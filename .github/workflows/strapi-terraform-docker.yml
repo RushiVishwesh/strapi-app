@@ -1,4 +1,4 @@
-name: Deploy strapi docker
+name: Deploy strapi docker using terraform
 
 on:
   push:
@@ -16,19 +16,19 @@ jobs:
       - name: build docker image
         run: docker build -t vishweshrushi/strapi:latest .
 
-      - name: log in to docker Hub
+      - name: login to dockerhub
         run: echo "${{ secrets.vishweshrushi }}" | docker login -u vishweshrushi --password-stdin
 
       - name: push docker image to dockerhub
         run: docker push vishweshrushi/strapi:latest
         
-      - name: Set up Terraform
+      - name: terraform
         uses: hashicorp/setup-terraform@v1
 
-      - name: Initialize Terraform
+      - name: initialize Terraform
         run: terraform init
 
-      - name: Deploy Infrastructure
+      - name: deploy iac
         run: terraform apply -auto-approve
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
