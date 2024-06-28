@@ -59,11 +59,15 @@ resource "aws_instance" "web" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo apt update -y",
-      "sudo apt install docker.io -y",
-      "sudo usermod -aG docker ubuntu",
-      "sudo docker pull vishweshrushi/strapi:latest",
-      "sudo docker run -d -p 1337:1337 vishweshrushi/strapi:latest"
+      "sudo apt update -y"
+      "sudo apt install nodejs npm -y"
+      "sudo npm install -g pm2"
+      "git clone https://github.com/RushiVishwesh/strapi-app.git"
+      "cd strapi-app"
+      "npm install"
+      "npm run build"
+      "pm2 start 'npm run start' --name=strapi-app"
+      "echo 'application started successfully on ec2'"
     ]
   }
 
