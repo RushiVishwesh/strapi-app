@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1"
+  region = "ap-south-2"
 }
 
 resource "tls_private_key" "example" {
@@ -45,8 +45,8 @@ resource "aws_security_group" "strapi_terra_sg_vishwesh" {
 }
 
 resource "aws_instance" "web" {
-  ami           = "ami-04b70fa74e45c3917"
-  instance_type = "t2.medium"
+  ami           = "ami-008616ec4a2c6975e"
+  instance_type = "t2.small"
   key_name      = aws_key_pair.terra_key_strapi.key_name
   security_groups = [aws_security_group.strapi_terra_sg_vishwesh.name]
   
