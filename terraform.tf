@@ -46,7 +46,7 @@ resource "aws_security_group" "strapi_terra_sg_vishwesh" {
 
 resource "aws_instance" "web" {
   ami           = "ami-008616ec4a2c6975e"
-  instance_type = "t2.small"
+  instance_type = "t3.small"
   key_name      = aws_key_pair.terra_key_strapi.key_name
   security_groups = [aws_security_group.strapi_terra_sg_vishwesh.name]
   
