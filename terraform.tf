@@ -2,14 +2,6 @@ provider "aws" {
   region = "ap-south-2"
 }
 
-resource "aws_ecr_repository" "strapi" {
-  name = "strapi"
-}
-
-output "ecr_repository_url" {
-  value = aws_ecr_repository.strapi.repository_url
-}
-
 resource "tls_private_key" "example" {
   algorithm = "RSA"
   rsa_bits  = 4096
@@ -68,14 +60,9 @@ resource "aws_instance" "web" {
   provisioner "remote-exec" {
     inline = [
       "sudo apt update -y",
-      "sudo apt install nodejs npm -y",
-      "sudo npm install -g yarn pm2",
-      "git clone https://github.com/RushiVishwesh/strapi-app.git",
-      "cd strapi-app",
-      "npm install",
-      "npm run build",
-      "pm2 start 'npm run start' --name=strapi-app",
-      "echo \"application started successfully to ec2\""
+      "sudo apt install docker.io -y",
+      "docker pull vishweshrushi/strapi:latest"
+      "docker run -d -p 1337:1337 vishweshrushi/strapi:latest"
     ]
   }
 
