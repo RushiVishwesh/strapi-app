@@ -1,0 +1,67 @@
+name: Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform_strapi_iac:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+
+    - name: Install Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Init
+      run: terraform init
+      
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_KEY_VALUE }}
+
+    - name: Save terraform output
+      id: save-terraform-outputs
+      run: |
+        echo "ecr_repository_url=$(terraform output -raw ecr_repository_url)" >> $GITHUB_ENV
+        echo "instance_ip=$(terraform output -raw instance_ip)" >> $GITHUB_ENV
+        echo "$(terraform output -raw private_key)" > private_key.pem
+        chmod 600 private_key.pem
+
+  build_and_push_strapi:
+    runs-on: ubuntu-latest
+    needs: terraform_strapi_iac
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build and push Docker image to ECR
+      run: |
+        docker build -t strapi .
+        docker tag strapi:latest
+        docker push strapi:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push
+
+    steps:
+    - name: Install SSH client
+      run: sudo apt-get install -y openssh-client
+
+    - name: Deploy docker image on EC2
+      run: |
+        ssh -i private_key.pem ubuntu@${{ env.instance_ip }} << EOF
+          aws ecr get-login-password --region ap-south-2 | docker login --username AWS --password-stdin ${{ env.ecr_repository_url }}
+          docker pull strapi:latest
+          docker run -d -p 1337:1337 strapi:latest
+        EOF
