@@ -2,6 +2,14 @@ provider "aws" {
   region = "ap-south-2"
 }
 
+resource "aws_ecr_repository" "strapi" {
+  name = "strapi"
+}
+
+output "ecr_repository_url" {
+  value = aws_ecr_repository.strapi.repository_url
+}
+
 resource "tls_private_key" "example" {
   algorithm = "RSA"
   rsa_bits  = 4096
