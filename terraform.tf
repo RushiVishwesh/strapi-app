@@ -66,7 +66,7 @@ resource "aws_instance" "web" {
       "cd strapi-app",
       "npm install",
       "npm run build",
-      "pm2 start "npm run start" --name=strapi-app",
+      "pm2 start 'npm run start' --name=strapi-app",
       "echo \"application started successfully to ec2\""
     ]
   }
