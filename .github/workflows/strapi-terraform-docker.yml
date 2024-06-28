@@ -18,12 +18,12 @@ jobs:
 
     - name: Terraform Init
       run: terraform init
-      
+  
     - name: Terraform Apply
-      run: terraform apply -auto-approve
       env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_KEY_VALUE }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: terraform apply -auto-approve
 
     - name: Save terraform output
       id: save-terraform-outputs
@@ -43,22 +43,23 @@ jobs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_KEY_VALUE }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-south-2
-        
-    - name: Login to ecr
+
+    - name: Login to ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-      
-    - name: Build and push docker image to ecr
+
+    - name: Build and push Docker image to ECR
       run: |
         docker build -t strapi .
-        docker tag strapi:latest
-        docker push strapi:latest
+        docker tag strapi:latest ${{ env.ecr_repository_url }}:latest
+        docker push ${{ env.ecr_repository_url }}:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -72,6 +73,6 @@ jobs:
       run: |
         ssh -i private_key.pem ubuntu@${{ env.instance_ip }} << EOF
           aws ecr get-login-password --region ap-south-2 | docker login --username AWS --password-stdin ${{ env.ecr_repository_url }}
-          docker pull strapi:latest
-          docker run -d -p 1337:1337 strapi:latest
+          docker pull ${{ env.ecr_repository_url }}:latest
+          docker run -d -p 1337:1337 ${{ env.ecr_repository_url }}:latest
         EOF
