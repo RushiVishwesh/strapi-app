@@ -62,8 +62,8 @@ resource "aws_instance" "web" {
       "sudo apt update -y",
       "sudo apt install docker.io -y",
       "sudo usermod -aG docker ubuntu",
-      "docker pull vishweshrushi/strapi:latest",
-      "docker run -d -p 1337:1337 vishweshrushi/strapi:latest"
+      "sudo docker pull vishweshrushi/strapi:latest",
+      "sudo docker run -d -p 1337:1337 vishweshrushi/strapi:latest"
     ]
   }
 
