@@ -27,4 +27,4 @@ jobs:
             npm install
             npm run build
             pm2 start "npm run start" --name=strapi-app
-            echo "application started successfully on ec2"
+            echo "application started successfully on ec2."
