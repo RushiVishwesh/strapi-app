@@ -1,4 +1,4 @@
-name: Deploy to ECS
+name: Deploy strapi docker
 
 on:
   push:
@@ -13,13 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v1
 
-      - name: Build Docker image
+      - name: build docker image
         run: docker build -t vishweshrushi/strapi:latest .
 
-      - name: Log in to Docker Hub
+      - name: log in to docker Hub
         run: echo "${{ secrets.vishweshrushi }}" | docker login -u vishweshrushi --password-stdin
 
-      - name: Push Docker image to Docker Hub
+      - name: push docker image to dockerhub
         run: docker push vishweshrushi/strapi:latest
         
       - name: Set up Terraform
