@@ -62,11 +62,11 @@ resource "aws_instance" "web" {
       "sudo apt update -y",
       "sudo apt install nodejs npm -y",
       "sudo npm install -g yarn pm2",
-      git clone https://github.com/RushiVishwesh/strapi-app.git
-      cd strapi-app
-      npm install
-      npm run build
-      pm2 start "npm run start" --name=strapi-app
+      "git clone https://github.com/RushiVishwesh/strapi-app.git"
+      "cd strapi-app"
+      "npm install"
+      "npm run build"
+      "pm2 start "npm run start" --name=strapi-app"
       "echo \"application started successfully to ec2\""
     ]
   }
